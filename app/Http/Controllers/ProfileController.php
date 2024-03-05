@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\UserValidatorInterface;
 
 class ProfileController extends Controller
 {
+    private $userValidator;
+
+    public function __construct(UserValidatorInterface $userValidator) {
+        $this->userValidator = $userValidator;
+    }
+
     public function index()
     {
         $id = auth()->user()->id;
@@ -19,15 +26,8 @@ class ProfileController extends Controller
     {
         try {
             $id = auth()->user()->id;
-            $request->validate([
-                'name' => 'required|string',
-                'email' => 'required|email|unique:users,email,' . $id,
-            ]);
-
             $user = User::findOrFail($id);
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->save();
+            $this->userValidator->validateAndUpdate($user, $request);
 
             return redirect('/profile')->with('success', 'User updated successfully.');
         }catch (\Illuminate\Validation\ValidationException $e) {
