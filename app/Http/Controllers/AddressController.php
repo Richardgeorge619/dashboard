@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\AddressValidator;
 use App\Models\Address;
-use GuzzleHttp\Client;
+
 
 class AddressController extends Controller
 {
+    private $addressValidator;
+
+    public function __construct(AddressValidator $addressValidator) {
+        $this->addressValidator = $addressValidator;
+    }
+
     public function create()
     {
         return view('addresses.create');
@@ -15,7 +22,7 @@ class AddressController extends Controller
 
     public function store(Request $request)
     {
-        $is_validated = $this->validateAddress($request);
+        $is_validated = $this->addressValidator->validate($request->all());
         if(!$is_validated){
             return response()->json(['success' => false, 'message' => 'Address walidation error']);
         }
@@ -37,13 +44,13 @@ class AddressController extends Controller
 
     public function update(Request $request, $id)
     {
-        $is_validated = $this->validateAddress($request);
+        $is_validated = $this->addressValidator->validate($request->all());
         if(!$is_validated){
             return response()->json(['success' => false, 'message' => 'Address walidation error']);
         }
         $address = Address::findOrFail($id);
         $address->update($request->all());
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message' => 'Address edited successfully']);
     }
 
     public function destroy($id)
@@ -51,23 +58,5 @@ class AddressController extends Controller
         $address = Address::findOrFail($id);
         $address->delete();
         return response()->json(['success' => true, 'message' => 'Address deleted successfully']);
-    }
-
-    function validateAddress($request)
-    {
-        $apiKey = config('services.google_maps.api_key');
-        $url = "https://maps.googleapis.com/maps/api/geocode/json?address={$request->street},{$request->city},{$request->state},{$request->postalCode}&key={$apiKey}";
-        try {
-            $client = new Client();
-            $response = $client->get($url);
-            $data = json_decode($response->getBody(), true);
-            if ($data['status'] === 'OK') {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (\Exception $e) {
-            return false;
-        }
     }
 }

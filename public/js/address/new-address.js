@@ -7,9 +7,11 @@
          type: 'POST',
          data: formData,
          success: function(response) {
-             //  $('#editAddressModal').modal('hide');
              alert(response.message);
-             //  location.reload();
+             if (response.success == true) {
+                 $('#editAddressModal').modal('hide');
+                 location.reload();
+             }
          },
          error: function(xhr, status, error) {
              // Handle error response (e.g., show error message)

@@ -4,6 +4,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="container">
         <h5>Edit User</h5><hr>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form method="POST" action="{{ route('users.update', $user->id) }}">
             @csrf
             @method('PUT')

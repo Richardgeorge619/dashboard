@@ -20,20 +20,24 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|string|min:8',
+            ]);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->is_admin = $request->is_admin ? 1 : 0;
-        $user->save();
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = bcrypt($request->password);
+            $user->is_admin = $request->is_admin ? 1 : 0;
+            $user->save();
 
-        return redirect('/users')->with('success', 'User created successfully.');
+            return redirect('/users')->with('success', 'User created successfully.');
+        }catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 
     public function edit($id)
@@ -44,17 +48,21 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email,' . $id,
-        ]);
-
-        $user = User::findOrFail($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->save();
-
-        return redirect('/users')->with('success', 'User updated successfully.');
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email|unique:users,email,' . $id,
+            ]);
+    
+            $user = User::findOrFail($id);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->save();
+    
+            return redirect('/users')->with('success', 'User updated successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 
     public function destroy($id)

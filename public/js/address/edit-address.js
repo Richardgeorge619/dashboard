@@ -8,13 +8,16 @@ $('#editAddressForm').submit(function(event) {
         type: 'POST',
         data: formData,
         success: function(response) {
-            $('#editAddressModal').modal('hide');
-            alert('Address added successfully');
-            location.reload();
+            alert(response.message);
+            if (response.success == true) {
+                $('#editAddressModal').modal('hide');
+                location.reload();
+            }
         },
         error: function(xhr, status, error) {
             // Handle error response (e.g., show error message)
-            console.error(xhr.responseText);
+            var response = JSON.parse(xhr.responseText);
+            alert(response.message);
         }
     });
 });

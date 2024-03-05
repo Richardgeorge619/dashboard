@@ -4,6 +4,11 @@
     <div class="container">
         <h5 class="text-center">Users</h5>
         <hr>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
         <div class="row">
             <div class="col-md-12 text-right">
               <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm">New User</a>

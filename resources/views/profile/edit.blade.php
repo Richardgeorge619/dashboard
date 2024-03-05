@@ -4,6 +4,20 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="container">
         <h5>Edit User</h5><hr>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form method="POST" action="{{ route('profile.update') }}">
             @csrf
             @method('PUT')
