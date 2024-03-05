@@ -4,7 +4,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="container">
         <h5>Edit User</h5><hr>
-        <form method="POST" action="{{ route('users.update', $user->id) }}">
+        <form method="POST" action="{{ route('profile.update') }}">
             @csrf
             @method('PUT')
             <div class="form-group">

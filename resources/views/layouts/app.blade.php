@@ -16,27 +16,41 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-            <a class="nav-link active" href="/users">Home</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/users">Users</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/logout">Logout</a>
-        </li>
+         @if(auth()->user()->is_admin)
+            <li class="nav-item">
+                <a class="nav-link active" href="/users">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/users">Users</a>
+            </li>
+         @endif
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
         </ul>
     </div>
     </nav>
 
     <main>
          <div class="dashboard">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                        Logged in as : {{ auth()->user()->email }} <br>
+                        @if(auth()->user()->is_admin)
+                            (Admin)
+                        @else
+                            (User)
+                        @endif
+                </div>
+            </div>
              <div class="card dashboard-card">
                 @yield('content')
              </div>
          </div>
     </main>
-
     <footer class="fixed-bottom">
         <h6 class="text-center">&copy; {{ date('Y') }} Your Company. All rights reserved.</h6>
     </footer>

@@ -7,13 +7,14 @@
          type: 'POST',
          data: formData,
          success: function(response) {
-             $('#editAddressModal').modal('hide');
-             alert('Address edited successfully');
-             location.reload();
+             //  $('#editAddressModal').modal('hide');
+             alert(response.message);
+             //  location.reload();
          },
          error: function(xhr, status, error) {
              // Handle error response (e.g., show error message)
-             console.error(xhr.responseText);
+             var response = JSON.parse(xhr.responseText);
+             alert(response.message);
          }
      });
  });

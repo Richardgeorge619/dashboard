@@ -12,7 +12,6 @@ class AdminMiddleware
         if (auth()->user()->is_admin) {
             return $next($request);
         }
-
-        return redirect('/login')->with('error', 'Unauthorized access.');
+        return redirect('/profile')->with('error', 'Unauthorized access.');
     }
 }

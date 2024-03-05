@@ -42,4 +42,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public static function getUserByStatus($status)
+    {
+        return self::where('is_admin', $status)->get();
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Address;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -15,7 +14,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::where('is_admin', false)->get();
+        $users = User::getUserByStatus(false);
         return view('users.index', ['users' => $users]);
     }
 
@@ -39,9 +38,8 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        $addresses = Address::where('user_id', $id)->get();
-        return view('users.edit', compact('user', 'addresses'));
+        $user = User::with('addresses')->findOrFail($id);
+        return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, $id)
