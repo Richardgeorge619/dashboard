@@ -53,39 +53,21 @@ class AddressController extends Controller
         return response()->json(['success' => true, 'message' => 'Address deleted successfully']);
     }
 
-    public function validateAddress($request)
+    function validateAddress($request)
     {
-        // Validate the request data
-        $request->validate([
-            'street' => 'required|string',
-            'city' => 'required|string',
-            'state' => 'required|string',
-            'postal_code' => 'required|string',
-        ]);
-
-        // Make a request to SmartyStreets API
-        $client = new Client();
-        $response = $client->get('https://api.smartystreets.com/street-address', [
-            'query' => [
-                'auth-id' => '7945a380-9a5a-0336-30e5-4d2a24943e79',
-                'auth-token' => 'rJ6QBbttTIIiAw7l7CUg',
-                'street' => $request->street,
-                'city' => $request->city,
-                'state' => $request->state,
-                'zipcode' => $request->postal_code,
-            ]
-        ]);
-
-        print_r($response);
-        // Process the response
-        $result = json_decode($response->getBody()->getContents(), true);
-
-        // Handle the validation result (e.g., display a message to the user)
-        if (!empty($result)) {
-            // Address is valid
-            return true; 
-        } 
-        return false;
+        $apiKey = config('services.google_maps.api_key');
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?address={$request->street},{$request->city},{$request->state},{$request->postalCode}&key={$apiKey}";
+        try {
+            $client = new Client();
+            $response = $client->get($url);
+            $data = json_decode($response->getBody(), true);
+            if ($data['status'] === 'OK') {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
     }
-    
 }
